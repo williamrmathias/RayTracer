@@ -3,7 +3,20 @@
 #include "Ray.h"
 #include "Tuple3d.h"
 
+bool hit_sphere(const point3d& center, double radius, const Ray& ray) {
+	Tuple3d oc = ray.get_origin() - center;
+	double a = dot(ray.get_direction(), ray.get_direction());
+	double b = 2.0 * dot(oc, ray.get_direction());
+	double c = dot(oc, oc) - (radius * radius);
+	double discriminant = (b * b) - (4 * a * c);
+	return discriminant > 0;
+}
+
 color ray_color(const Ray& ray) {
+	if (hit_sphere(point3d(0, 0, -2), 0.5, ray)) {
+		// this colors the sphere red
+		return color(1, 0, 0);
+	}
 	Tuple3d unit_direction = normalize(ray.get_direction());
 	double t = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
@@ -32,9 +45,9 @@ int main() {
 
 	std::cout << "P3\n" << IMAGE_WIDTH << ' ' << IMAGE_HEIGHT << "\n255\n";
 
-	for (int j = IMAGE_HEIGHT - 1; j >= 0; j--) {
+	for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
 		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-		for (int i = 0; i < IMAGE_WIDTH; i++) {
+		for (int i = 0; i < IMAGE_WIDTH; ++i) {
 			double u = double(i) / (IMAGE_WIDTH - 1);
 			double v = double(j) / (IMAGE_HEIGHT - 1);
 			Ray ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
