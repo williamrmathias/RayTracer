@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Tuple3d.h"
 
+#pragma once
+
 // translate [0, 1.0] pixels values to [0, 255]
 // then prints out the pixel values
 void print_color(std::ostream& out, color pixel) {

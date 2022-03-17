@@ -1,6 +1,8 @@
 #include <cmath>
 #include<iostream>
 
+#pragma once
+
 class Tuple3d{
 	// a class representing a 3d vector
 	// can make a point in space or an RGB pixel
@@ -9,12 +11,12 @@ private:
 
 public:
 	// default ctor
-	Tuple3d(): 
-		coords{ 0, 0, 0 } {}
+	Tuple3d()
+		: coords{ 0, 0, 0 } {}
 
 	//ctor
-	Tuple3d(double x, double y, double z) :
-		coords{ x, y, z } {}
+	Tuple3d(double x, double y, double z) 
+		: coords{ x, y, z } {}
 
 	// underlying array access
 	double operator[](int i) const {
