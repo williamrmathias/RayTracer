@@ -129,7 +129,7 @@ Tuple3d operator/(const Tuple3d& v, const double k) {
 
 // vector dot product
 double dot(const Tuple3d& v, const Tuple3d& w) {
-	return v.x() * w.x() + v.y() * w.y() + v.z() + w.z();
+	return v.x() * w.x() + v.y() * w.y() + v.z() * w.z();
 }
 
 // vector cross product
