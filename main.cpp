@@ -1,21 +1,16 @@
 #include <iostream>
+#include "utility.h"
 #include "Color.h"
 #include "Ray.h"
 #include "Tuple3d.h"
+#include "Sphere.h"
+#include "Surface.h"
+#include "SurfaceList.h"
 
-bool hit_sphere(const point3d& center, double radius, const Ray& ray) {
-	Tuple3d oc = ray.get_origin() - center;
-	double a = dot(ray.get_direction(), ray.get_direction());
-	double b = 2.0 * dot(oc, ray.get_direction());
-	double c = dot(oc, oc) - (radius * radius);
-	double discriminant = (b * b) - (4 * a * c);
-	return discriminant > 0;
-}
-
-color ray_color(const Ray& ray) {
-	if (hit_sphere(point3d(0, 0, -2), 0.5, ray)) {
-		// this colors the sphere red
-		return color(1, 0, 0);
+color ray_color(const Ray& ray, const SurfaceList& world) {
+	hit_record record;
+	if (world.hit(ray, 0, infinity, record)) {
+		return 0.5 * color(record.normal + color(1, 1, 1));
 	}
 	Tuple3d unit_direction = normalize(ray.get_direction());
 	double t = 0.5 * (unit_direction.y() + 1.0);
@@ -41,6 +36,11 @@ int main() {
 	point3d lower_left_corner = origin - (horizontal / 2) - 
 		(vertical / 2) - Tuple3d(0, 0, focal_length);
 
+	// world surface
+	SurfaceList world;
+	world.add(std::make_shared<Sphere>(Tuple3d(0, 0, -1), 0.5));
+	world.add(std::make_shared<Sphere>(Tuple3d(0, -100.5, -1), 100));
+
 	// render
 
 	std::cout << "P3\n" << IMAGE_WIDTH << ' ' << IMAGE_HEIGHT << "\n255\n";
@@ -51,7 +51,7 @@ int main() {
 			double u = double(i) / (IMAGE_WIDTH - 1);
 			double v = double(j) / (IMAGE_HEIGHT - 1);
 			Ray ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			color pixel_color = ray_color(ray);
+			color pixel_color = ray_color(ray, world);
 			print_color(std::cout, pixel_color);
 		}
 	}
