@@ -6,6 +6,7 @@
 #include "Sphere.h"
 #include "Surface.h"
 #include "SurfaceList.h"
+#include "Camera.h"
 
 color ray_color(const Ray& ray, const SurfaceList& world) {
 	hit_record record;
@@ -23,24 +24,16 @@ int main() {
 	const double ASPECT_RATIO = 16.0 / 9.0;
 	const int IMAGE_WIDTH = 400;
 	const int IMAGE_HEIGHT = static_cast<int>(IMAGE_WIDTH / ASPECT_RATIO);
+	const int num_samples = 100;
 
 	// camera
 
-	double viewport_height = 2.0;
-	double viewport_width = ASPECT_RATIO * viewport_height;
-	double focal_length = 1.0;
-
-	point3d origin = point3d(0, 0, 0);
-	Tuple3d horizontal = Tuple3d(viewport_width, 0, 0);
-	Tuple3d vertical = Tuple3d(0, viewport_height, 0);
-	point3d lower_left_corner = origin - (horizontal / 2) - 
-		(vertical / 2) - Tuple3d(0, 0, focal_length);
+	Camera camera;
 
 	// world surface
 	SurfaceList world;
 	world.add(std::make_shared<Sphere>(Tuple3d(0, 0, -1), 0.5));
 	world.add(std::make_shared<Sphere>(Tuple3d(0, -100.5, -1), 100));
-	//world.add(std::make_shared<Sphere>(Tuple3d(0, -100.5, -1), 100));
 
 	// render
 
@@ -49,11 +42,14 @@ int main() {
 	for (int j = IMAGE_HEIGHT - 1; j >= 0; --j) {
 		std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
 		for (int i = 0; i < IMAGE_WIDTH; ++i) {
-			double u = double(i) / (IMAGE_WIDTH - 1);
-			double v = double(j) / (IMAGE_HEIGHT - 1);
-			Ray ray(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			color pixel_color = ray_color(ray, world);
-			print_color(std::cout, pixel_color);
+			color pixel(0, 0, 0);
+			for (int s = 0; s < num_samples; ++s) {
+				double u = (i + random_double()) / (IMAGE_WIDTH - 1);
+				double v = (j + random_double()) / (IMAGE_HEIGHT - 1);
+				Ray ray = camera.get_ray(u, v);
+				pixel += ray_color(ray, world);
+			}
+			print_color(std::cout, pixel, num_samples);
 		}
 	}
 
