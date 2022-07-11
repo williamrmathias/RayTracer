@@ -26,9 +26,9 @@ bool Sphere::hit(
 	double discriminant = (half_b * half_b) - (a * c);
 
 	if (discriminant < 0) {return false;}
-	double root = (-half_b - discriminant) / a;
+	double root = (-half_b - std::sqrt(discriminant)) / a;
 	if (root < t_min || root > t_max) {
-		root = (-half_b + discriminant) / a;
+		root = (-half_b + std::sqrt(discriminant)) / a;
 		if (root < t_min || root > t_max) { return false; }
 	}
 
