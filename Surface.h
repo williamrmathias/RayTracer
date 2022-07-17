@@ -17,5 +17,6 @@ struct hit_record {
 
 class Surface {
 public:
-	virtual bool hit(const Ray& ray, double t_min, double t_max, hit_record& record) const = 0;
+	virtual bool hit(const Ray& ray, double t_min,
+		double t_max, hit_record& record) const = 0;
 };

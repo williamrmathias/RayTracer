@@ -1,6 +1,8 @@
 #include <cmath>
 #include<iostream>
 
+#include "utility.h"
+
 #pragma once
 
 class Tuple3d{
@@ -79,12 +81,23 @@ public:
 
 	// vector length squared
 	double length_squared() const {
-		return coords[0] * coords[0] + coords[1] * coords[1] + coords[2] * coords[2];
+		return coords[0] * coords[0] + coords[1] * coords[1] 
+			+ coords[2] * coords[2];
 	}
 
 	// vector length
 	double length() const {
 		return std::sqrt(this->length_squared());
+	}
+
+	// random vectors
+	static Tuple3d random() {
+		return Tuple3d(random_double(), random_double(), random_double());
+	}
+
+	static Tuple3d random(double min, double max) {
+		return Tuple3d(random_double(min, max),
+			random_double(min, max), random_double(min, max));
 	}
 
 };
@@ -142,4 +155,29 @@ Tuple3d cross(const Tuple3d& v, const Tuple3d& w) {
 // make vector a unit vector in same direction
 Tuple3d normalize(Tuple3d v) {
 	return v / v.length();
+}
+
+// random vector in sphere
+Tuple3d random_in_unit_sphere() {
+	while (true) {
+		Tuple3d p = Tuple3d::random(-1, 1);
+		if (p.length_squared() >= 1) { continue; }
+		return p;
+	}
+}
+
+// random normalized vector in sphere
+Tuple3d random_normal_vector() {
+	return normalize(random_in_unit_sphere());
+}
+
+// random vector in hemisphere
+Tuple3d random_in_hemi(const Tuple3d& normal) {
+	Tuple3d in_unit_sphere = random_in_unit_sphere();
+	if (dot(in_unit_sphere, normal) > 0.0) {
+		return in_unit_sphere;
+	}
+	else {
+		return -in_unit_sphere;
+	}
 }

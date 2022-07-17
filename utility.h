@@ -3,9 +3,6 @@
 #include <memory>
 #include <cstdlib>
 
-#include "Tuple3d.h"
-#include "Ray.h"
-
 #pragma once
 
 // Constants
