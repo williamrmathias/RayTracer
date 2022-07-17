@@ -193,3 +193,12 @@ Tuple3d random_in_hemi(const Tuple3d& normal) {
 Tuple3d reflect(const Tuple3d& v, const Tuple3d& norm) {
 	return v - 2 * dot(v, norm) * norm;
 }
+
+// light refraction
+Tuple3d refract(const Tuple3d& ray_in, const Tuple3d& n, double eta_ratio) {
+	double cos_theta = fmin(dot(-ray_in, n), 1.0);
+	Tuple3d ray_out_perp = eta_ratio * (ray_in + cos_theta * n);
+	Tuple3d ray_out_para = -sqrt(
+		fabs(1.0 - ray_out_perp.length_squared())) * n;
+	return ray_out_perp + ray_out_para;
+}
