@@ -7,6 +7,7 @@
 #include "Surface.h"
 #include "SurfaceList.h"
 #include "Camera.h"
+#include "Material.h"
 
 color ray_color(const Ray& ray, const SurfaceList& world, int depth) {
 	hit_record record;
@@ -17,10 +18,13 @@ color ray_color(const Ray& ray, const SurfaceList& world, int depth) {
 	}
 
 	if (world.hit(ray, 0.001, infinity, record)) {
-		point3d target = record.p + record.normal 
-			+ random_normal_vector();
-		//point3d target = record.p + random_in_hemi(record.normal);
-		return 0.5 * ray_color(Ray(record.p, target - record.p), world, depth-1);
+		Ray scattered;
+		color attenuation;
+		if (record.material_ptr->scatter(ray, record,
+			attenuation, scattered)) {
+			return attenuation * ray_color(scattered, world, depth - 1);
+		}
+		return color(0, 0, 0);
 	}
 
 	Tuple3d unit_direction = normalize(ray.get_direction());
@@ -43,8 +47,20 @@ int main() {
 
 	// world surface
 	SurfaceList world;
-	world.add(std::make_shared<Sphere>(Tuple3d(0, 0, -1), 0.5));
-	world.add(std::make_shared<Sphere>(Tuple3d(0, -100.5, -1), 100));
+
+	auto material_ground = std::make_shared<Lambertian>(color(0.8, 0.8, 0.0));
+	auto material_center = std::make_shared<Lambertian>(color(0.7, 0.3, 0.3));
+	auto material_left = std::make_shared<Metal>(color(0.8, 0.8, 0.8), 0.3);
+	auto material_right = std::make_shared<Metal>(color(0.8, 0.6, 0.2), 1.0);
+
+	world.add(std::make_shared<Sphere>(point3d(0.0, -100.5, -1.0),
+		100.0, material_ground));
+	world.add(std::make_shared<Sphere>(point3d(0.0, 0.0, -1.0),
+		0.5, material_center));
+	world.add(std::make_shared<Sphere>(point3d(-1.0, 0.0, -1.0),
+		0.5, material_left));
+	world.add(std::make_shared<Sphere>(point3d(1.0, 0.0, -1.0),
+		0.5, material_right));
 
 	// render
 

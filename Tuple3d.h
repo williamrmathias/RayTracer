@@ -100,6 +100,13 @@ public:
 			random_double(min, max), random_double(min, max));
 	}
 
+	bool near_zero() const {
+		// Returns true if the vector is close to zero in all dimensions.
+		const double s = 1e-8;
+		return (fabs(coords[0]) < s) &&
+			(fabs(coords[1]) < s) &&
+			(fabs(coords[2]) < s);
+	}
 };
 
 using point3d = Tuple3d; // point in 3d space
@@ -180,4 +187,9 @@ Tuple3d random_in_hemi(const Tuple3d& normal) {
 	else {
 		return -in_unit_sphere;
 	}
+}
+
+// tuple reflection
+Tuple3d reflect(const Tuple3d& v, const Tuple3d& norm) {
+	return v - 2 * dot(v, norm) * norm;
 }

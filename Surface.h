@@ -1,10 +1,14 @@
 #include "Ray.h"
+#include "utility.h"
 
 #pragma once
+
+class Material;
 
 struct hit_record {
 	point3d p;
 	Tuple3d normal;
+	std::shared_ptr<Material> material_ptr;
 	double t;
 	bool front_face;
 

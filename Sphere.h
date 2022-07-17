@@ -1,4 +1,5 @@
 #include "Surface.h"
+#include "utility.h"
 
 #pragma once
 
@@ -7,7 +8,8 @@ public:
 	//default ctor
 	Sphere() {}
 	// ctor
-	Sphere(point3d c, double r) : center(c), radius(r) {}
+	Sphere(point3d c, double r, std::shared_ptr<Material> material) 
+		: center(c), radius(r), material_ptr(material) {}
 
 	virtual bool hit(
 		const Ray& ray, double t_min, double t_max, hit_record& record) const override;
@@ -15,6 +17,7 @@ public:
 private:
 	point3d center;
 	double radius;
+	std::shared_ptr<Material> material_ptr;
 };
 
 bool Sphere::hit(
@@ -36,6 +39,7 @@ bool Sphere::hit(
 	record.t = root;
 	Tuple3d outward_norm = (record.p - this->center) / this->radius;
 	record.set_face_normal(ray, outward_norm);
+	record.material_ptr = this->material_ptr;
 
 	return true;
 }

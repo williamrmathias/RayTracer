@@ -8,6 +8,9 @@ private:
 	Tuple3d direction;
 
 public:
+	//default ctor
+	Ray() {}
+
 	//ctor
 	Ray(const point3d& origin, const Tuple3d& direction)
 		: origin(origin), direction(direction) {}
