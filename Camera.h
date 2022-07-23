@@ -5,17 +5,26 @@
 class Camera {
 public:
 	//default ctor
-	Camera() {
-		double aspect_ratio = 16.0 / 9.0;
-		double viewport_height = 2.0;
+	Camera(
+		double vertical_fov,
+		double aspect_ratio,
+		point3d look_from,
+		point3d look_at,
+		Tuple3d vup
+	) {
+		double theta = degrees_to_radians(vertical_fov);
+		double height = tan(theta / 2);
+		double viewport_height = 2.0 * height;
 		double viewport_width = aspect_ratio * viewport_height;
-		double focal_length = 1.0;
 
-		origin = point3d(0, 0, 0);
-		horizontal = Tuple3d(viewport_width, 0.0, 0.0);
-		vertical = Tuple3d(0.0, viewport_height, 0.0);
-		lower_left_corner = origin - (horizontal / 2) - (vertical / 2)
-			- Tuple3d(0, 0, focal_length);
+		Tuple3d w = normalize(look_from - look_at);
+		Tuple3d u = normalize(cross(vup, w));
+		Tuple3d v = cross(w, u);
+
+		origin = look_from;
+		horizontal = viewport_width * u;
+		vertical = viewport_height * v;
+		lower_left_corner = origin - (horizontal / 2) - (vertical / 2) - w;
 	}
 
 	Ray get_ray(double u, double v) const {

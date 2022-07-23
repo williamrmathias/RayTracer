@@ -43,9 +43,16 @@ int main() {
 
 	// camera
 
-	Camera camera;
+	Camera camera(
+		20.0,
+		ASPECT_RATIO,
+		point3d(-2, 2, 1),
+		point3d(0, 0, -1),
+		Tuple3d(0, 1, 0)
+	);
 
 	// world surface
+
 	SurfaceList world;
 
 	auto material_ground = std::make_shared<Lambertian>(color(0.8, 0.8, 0.0));
@@ -60,9 +67,12 @@ int main() {
 	world.add(std::make_shared<Sphere>(point3d(-1.0, 0.0, -1.0),
 		0.5, material_left));
 	world.add(std::make_shared<Sphere>(point3d(-1.0, 0.0, -1.0),
-		-0.4, material_left));
+		-0.45, material_left));
 	world.add(std::make_shared<Sphere>(point3d(1.0, 0.0, -1.0),
 		0.5, material_right));
+
+
+	
 
 	// render
 
