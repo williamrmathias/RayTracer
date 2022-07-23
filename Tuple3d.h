@@ -202,3 +202,12 @@ Tuple3d refract(const Tuple3d& ray_in, const Tuple3d& n, double eta_ratio) {
 		fabs(1.0 - ray_out_perp.length_squared())) * n;
 	return ray_out_perp + ray_out_para;
 }
+
+// generates random point inside unit disk
+Tuple3d random_in_unit_disk() {
+	while (true) {
+		Tuple3d p = Tuple3d(random_double(-1, 1), random_double(-1, 1), 0);
+		if (p.length_squared() >= 1) { continue; }
+		return p;
+	}
+}
